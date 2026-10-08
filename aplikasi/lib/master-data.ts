@@ -1,6 +1,7 @@
 import {z} from 'zod';
 import {AppError,auditStatement,database,hashPassword} from './server';
 import type {Actor,Domain,Organization,User,Location,Indicator,Audit,Resource} from './model';
+import type {PreparedStatement} from './database';
 
 const text=z.string().trim().min(2,'Minimal 2 karakter.').max(180,'Maksimal 180 karakter.');
 const code=z.string().trim().toUpperCase().regex(/^[A-Z0-9-]{2,24}$/,'Kode berisi 2–24 huruf, angka, atau tanda hubung.');
@@ -43,7 +44,7 @@ export async function saveMaster(actor:Actor,resource:Resource,raw:unknown,recor
     if(admins&&(!data.active||data.kind!=='BNPP'))throw new AppError(400,'Organisasi dengan admin aktif harus tetap aktif dan bertipe BNPP.');
   }
   if('domain_id' in record&&!await db.prepare('SELECT id FROM domains WHERE id=?').bind(record.domain_id).first())throw new AppError(400,'Domain tidak valid.');
-  const statements:D1PreparedStatement[]=[];
+  const statements:PreparedStatement[]=[];
   let values:Record<string,unknown>={...record};
   if(resource==='users'){
     const data=record as z.infer<typeof schemas.users>;

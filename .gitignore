@@ -17,6 +17,7 @@ dist/
 .agents/
 .codex/
 .tools/
+.data/
 *.tsbuildinfo
 *.sqlite
 *.sqlite-*

@@ -11,7 +11,7 @@ Demo menggunakan data simulasi. Nama unit batas darat/laut/udara sementara terpi
 ## Peta kode
 
 - `app/api/[...path]/route.ts`: endpoint login/logout dan data acuan; validasi peran dilakukan server.
-- `lib/server.ts`: koneksi D1, hash kata sandi, sesi, CSRF/origin, dan helper respons.
+- `lib/server.ts`: helper keamanan, hash kata sandi, sesi, CSRF/origin, dan helper respons.
 - `lib/master-data.ts`: query dengan lingkup akses dan penyimpanan data acuan.
 - `lib/model.ts`: tipe data bersama; tidak berisi kredensial.
 - `db/schema.ts` dan `drizzle/`: skema dan migrasi; jangan mengubah migrasi yang sudah diterapkan.
@@ -25,4 +25,4 @@ Pertahankan pembatasan akses pada setiap endpoint dan halaman server. Jangan mem
 
 Jalankan pemeriksaan TypeScript dan pengujian yang sesuai perubahan. Pemeriksaan visual belum dapat dilakukan karena browser otomatis terblokir batas penggunaan layanan, bukan karena build gagal. Jangan mengklaim UI telah diuji melalui browser sebelum benar-benar diverifikasi.
 
-Pratinjau tetap lokal. Publikasi merupakan fase 6 dalam roadmap yang disetujui. Jangan membuat deployment atau mengganti platform hosting tanpa konteks instruksi berikutnya.
+Pengguna telah meminta publikasi fase 1 ke GitHub ikuygrgmwd dan Vercel. Gunakan Next.js serta Neon PostgreSQL untuk online; SQLite untuk lokal. Pertahankan skema kedua adapter saat mengubah data. Dokumen publikasi berada di ../perencanaan/03-publikasi-github-vercel.md.

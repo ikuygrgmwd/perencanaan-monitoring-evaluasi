@@ -1,8 +1,8 @@
-import { env } from 'cloudflare:workers';
+export {database} from './database';
+import {database} from './database';
 import type {Actor} from './model';
 
 export class AppError extends Error { constructor(public status:number,message:string){super(message);} }
-export function database():D1Database {if(!env.DB)throw new AppError(503,'Penyimpanan belum tersedia. Silakan coba kembali.');return env.DB;}
 export const COOKIE='bnpp_demo_session';
 export const SESSION_SECONDS=8*60*60;
 export async function digest(value:string){return hex(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value))));}

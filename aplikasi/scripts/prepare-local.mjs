@@ -1,20 +1,22 @@
+import {DatabaseSync} from 'node:sqlite';
+import {mkdirSync,readFileSync,readdirSync} from 'node:fs';
+import {dirname} from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {readdirSync,existsSync} from 'node:fs';
-import {fileURLToPath} from 'node:url';
-process.chdir(fileURLToPath(new URL('../',import.meta.url)));
-function run(args,capture=false){
-  const result=spawnSync(process.execPath,args,{encoding:'utf8',stdio:capture?'pipe':'inherit',windowsHide:true});
-  if(result.status!==0){if(capture)console.error(result.stdout,result.stderr);throw new Error('Persiapan gagal. Periksa keluaran di atas.');}
-  return result.stdout||'';
+const file=process.env.SQLITE_PATH||'.data/demo.sqlite';
+mkdirSync(dirname(file),{recursive:true});
+const db=new DatabaseSync(file);
+db.exec('PRAGMA foreign_keys=ON;');
+db.exec('CREATE TABLE IF NOT EXISTS _app_migrations(name TEXT PRIMARY KEY)');
+const applied=new Set(db.prepare('SELECT name FROM _app_migrations').all().map(row=>row.name));
+for(const name of readdirSync('drizzle').filter(name=>name.endsWith('.sql')).sort()){
+ if(applied.has(name))continue;
+ db.exec('BEGIN IMMEDIATE;');
+ try{db.exec(readFileSync('drizzle/'+name,'utf8'));db.prepare('INSERT INTO _app_migrations(name) VALUES(?)').run(name);db.exec('COMMIT');}
+ catch(error){db.exec('ROLLBACK');throw error;}
 }
-if(!existsSync('node_modules/vinext'))throw new Error('Pasang dependensi terlebih dahulu dengan npm run install:ci.');
-run(['--import','./scripts/sites-env.mjs','scripts/run-framework.mjs','build']);
-const cli=['--import','./scripts/sites-env.mjs','node_modules/wrangler/bin/wrangler.js','d1','execute','DB','--local','--config','dist/server/wrangler.json','--persist-to','.wrangler/state'];
-const result=JSON.parse(run([...cli,'--command',"SELECT name FROM sqlite_master WHERE type='table' AND name IN ('assignments','audits','domains','indicators','locations','login_limits','organizations','sessions','users')",'--json'],true));
-const tables=result.flatMap(r=>r.results||[]).map(r=>r.name);
-const migrations=readdirSync('drizzle').filter(f=>f.endsWith('.sql')).sort();
-if(tables.length===0){for(const migration of migrations)run([...cli,'--file',`drizzle/${migration}`,'--json'],true);}
-else if(tables.length!==9||migrations.length!==1){throw new Error('Database sudah ada atau skema berubah. Tinjau dan jalankan hanya migrasi baru; persiapan tidak akan menimpa data.');}
-run(['scripts/seed-demo.mjs']);
-run([...cli,'--file','.sites-runtime/seed-demo.sql','--json'],true);
-console.log('Database demo siap. Data yang sudah ada tidak ditimpa. Jalankan npm run dev.');
+const seed=spawnSync(process.execPath,['scripts/seed-demo.mjs'],{stdio:'inherit',windowsHide:true});
+if(seed.status!==0)throw new Error('Seed gagal disiapkan.');
+db.exec('BEGIN IMMEDIATE');
+try{db.exec(readFileSync('.sites-runtime/seed-demo.sql','utf8'));db.exec('COMMIT');}
+catch(error){db.exec('ROLLBACK');throw error;}
+db.close();console.log('Database SQLite lokal siap; data lama tidak ditimpa.');

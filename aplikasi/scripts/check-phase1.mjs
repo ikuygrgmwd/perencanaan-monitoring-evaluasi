@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {mkdirSync,writeFileSync} from 'node:fs';
-const base=process.env.DEMO_TEST_URL||'http://127.0.0.1:5173';
+const base=process.env.DEMO_TEST_URL||'http://127.0.0.1:3000';
 if(!['127.0.0.1','localhost'].includes(new URL(base).hostname))throw new Error('Pengujian hanya untuk demo lokal.');
 const checks=[];const cleanup={users:[],organizations:[],locations:[],indicators:[]};
 async function call(path,{method='GET',body,cookie='',origin=base}={}){

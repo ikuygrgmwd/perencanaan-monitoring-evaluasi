@@ -1,20 +1,24 @@
 # Ruang Perbatasan
 
-Demo fungsional perencanaan, monitoring, dan evaluasi BWN–KP. Implementasi saat ini mencakup fase 1: fondasi, akun, hak akses, organisasi/unit, lokus, domain, dan indikator acuan.
+Demo fungsional perencanaan, monitoring, dan evaluasi BWN–KP. Fase 1: fondasi, akun, hak akses, organisasi/unit, lokus, domain, dan indikator acuan. Data dan nama lokus merupakan simulasi.
 
-## Membuka demo yang sudah disiapkan
+## Menjalankan lokal
 
-Jalankan `Mulai-Demo.cmd` di folder ini, atau gunakan:
+Gunakan Node.js 24 atau 26 dan npm:
 
 ```powershell
-node --import ./scripts/sites-env.mjs scripts/run-framework.mjs dev
+npm ci
+npm run db:local
+npm run dev
 ```
 
-Biarkan proses tetap berjalan. Buka alamat Local yang dicetak, biasanya `http://127.0.0.1:5173/login`. Jika server sudah berjalan, gunakan alamat yang sama tanpa menjalankan salinan kedua. Aplikasi hanya tersedia di komputer ini selama server aktif.
+Buka http://localhost:3000/login. SQLite lokal tersimpan di `.data/demo.sqlite` dan diabaikan Git. Persiapan database dan seed idempoten; record yang sudah ada tidak ditimpa. Data D1 lama di `.wrangler/state` tetap tersimpan terpisah dan tidak otomatis dipindahkan.
+
+Tanpa `DATABASE_URL`, aplikasi memakai SQLite lokal. Bila `.env.local` memuat `DATABASE_URL`, aplikasi memakai database cloud tersebut; perubahan lokal juga akan tersimpan ke database itu. Kredensial environment tidak boleh masuk Git.
 
 ## Akun simulasi
 
-Semua akun contoh menggunakan kata sandi `DemoBnpp2027!`. Tombol pilihan akun pada halaman login mengisi formulir agar mudah didemonstrasikan; tombol tersebut tidak melewati pemeriksaan server.
+Semua akun contoh menggunakan kata sandi **DemoBnpp2027!**. Tombol akun pada halaman login hanya mengisi formulir; server tetap memeriksa kata sandi.
 
 | Peran/unit | Email |
 | --- | --- |
@@ -26,63 +30,50 @@ Semua akun contoh menggunakan kata sandi `DemoBnpp2027!`. Tombol pilihan akun pa
 | Batas udara | udara@demo.bnpp.test |
 | PLBN | plbn@demo.bnpp.test |
 
-Data dummy: 7 organisasi, 7 akun, 4 domain, 6 lokus fiktif, dan 6 indikator. Tidak ada data atau capaian resmi. Nama unit masih berupa label simulasi.
+Seed: 7 organisasi, 7 akun, 4 domain, 6 lokus fiktif, dan 6 indikator. Admin mengelola data acuan; pengguna biasa membaca data sesuai organisasi dan penugasan lokus. Akun baru memerlukan kata sandi minimal 12 karakter. Perubahan akun mencabut sesi akun tersebut.
 
-## Skenario pemeriksaan manual
+## Vercel dan PostgreSQL
 
-1. Masuk sebagai admin dan buka Organisasi & unit, Kawasan & lokus, Indikator acuan, serta Akun pengguna.
-2. Tambahkan data contoh, ubah isinya, dan muat ulang halaman untuk memeriksa penyimpanan.
-3. Nonaktifkan record contoh yang tidak diperlukan. Data acuan tidak dihapus melalui antarmuka.
-4. Lihat Riwayat aktivitas untuk menelusuri perubahan.
-5. Keluar, kemudian masuk sebagai pengguna PLBN. Pengguna ini hanya melihat organisasinya dan lokus Arunika yang ditugaskan.
-6. Coba membuka `/akun` dengan akun pengguna: aplikasi menampilkan akses terbatas. Permintaan edit melalui API juga ditolak.
-7. Coba login dengan kata sandi salah dan periksa pesan yang ditampilkan.
+Runtime menggunakan Next.js App Router, React, TypeScript, dan Shadcn. Database online menggunakan Neon PostgreSQL melalui koneksi server; perubahan data dan audit disimpan dalam satu transaksi. Vercel menolak berjalan tanpa `DATABASE_URL` agar tidak menggunakan penyimpanan sementara secara diam-diam.
 
-Akun yang baru ditambahkan memerlukan kata sandi minimal 12 karakter. Jika admin mengubah akun yang sedang digunakan, sesi akun tersebut dicabut dan pengguna perlu masuk kembali.
+Konfigurasi proyek Vercel:
 
-## Teknologi dan penyimpanan
+- Root directory: `aplikasi`
+- Framework: Next.js; Node.js 24.x
+- Install: `npm ci`; build: `npm run build`
+- Environment: `DATABASE_URL`, disediakan integrasi Neon
+- Region: Singapura (`sin1`)
+- Branch produksi GitHub: `master`
 
-React, TypeScript, Vinext dengan pola App Router, komponen Shadcn, serta SQLite melalui D1 lokal. Skema ada di `db/schema.ts`; migrasi berada di `drizzle/`. Vinext pada starter ini masih beta, sehingga pilihan runtime harus ditinjau sebelum produksi.
-
-Data lokal berada di `.wrangler/state/` dan tidak masuk Git. Menghapus direktori tersebut menghilangkan data lokal. Tidak ada API cloud, akun hosting, atau variabel rahasia eksternal yang diperlukan untuk demo fase 1.
-
-## Persiapan pada checkout baru
-
-Gunakan Node.js minimal versi 22.13 dan npm. Pertahankan `package-lock.json`.
+Migrasi PostgreSQL terpisah berada di `db/postgres/`. Migrasi SQLite/Drizzle awal dipertahankan di `drizzle/`. Perubahan skema berikutnya harus mencakup kedua database bila mode lokal tetap didukung. Terapkan migrasi secara eksplisit, bukan dari endpoint publik atau setiap build:
 
 ```powershell
-npm run install:ci
-node node_modules/drizzle-kit/bin.cjs generate
-node scripts/prepare-local.mjs
-npm run dev
+node --env-file=.env.local scripts/prepare-postgres.mjs
 ```
 
-Skrip persiapan membangun aplikasi, membuat skema fase 1 jika database kosong, lalu menambahkan seed dengan `INSERT OR IGNORE`. Skrip tidak menimpa record yang sudah ada. Jika skema telah berkembang melewati migrasi awal, skrip berhenti agar migrasi baru ditinjau secara sengaja.
+Skrip mencatat migrasi yang diterapkan dan menambahkan seed dengan `ON CONFLICT DO NOTHING`. Tidak mereset data yang sudah ada.
 
-Jangan mengulang file migrasi yang telah diterapkan. Untuk menambah skema pada fase berikutnya, ubah `db/schema.ts`, hasilkan migrasi baru, tinjau SQL, bangun ulang, lalu terapkan hanya migrasi yang belum dijalankan:
-
-```powershell
-node --import ./scripts/sites-env.mjs node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/NAMA_MIGRASI_BARU.sql
-```
-
-## Build dan pemeriksaan
+## Pemeriksaan
 
 ```powershell
+npm run build
 node node_modules/typescript/bin/tsc --noEmit
-node --import ./scripts/sites-env.mjs scripts/run-framework.mjs build
-node scripts/check-phase1.mjs
+npm run start
+# Di terminal lain, server localhost:3000 harus sedang berjalan:
+npm run test:phase1
+npm run test:cleanup
 ```
 
-Pengujian API memerlukan dev server yang sedang berjalan. Pengujian hanya menerima alamat localhost. Record sementara dibuat khusus untuk pengujian; setelah pengujian, bersihkan record tersebut dengan file ID yang dihasilkan:
+Untuk server lokal yang memakai PostgreSQL, pembersihan menggunakan environment yang sama:
 
 ```powershell
-node --import ./scripts/sites-env.mjs node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file .sites-runtime/cleanup-test.sql
+node --env-file=.env.local scripts/cleanup-test.mjs
 ```
 
-Hasil tes berada di `.sites-runtime/hasil-uji-fase1.json`. Ringkasan pekerjaan dan batasan ada di `STATUS.md`. Pemeriksaan server tidak menggantikan pemeriksaan visual browser.
+Pengujian hanya menerima localhost dan membuat record sementara. File SQL pembersihan hanya memuat ID record yang dibuat pengujian. Hasil ada di `.sites-runtime/hasil-uji-fase1.json`. Pemeriksaan HTTP/render server tidak menggantikan pemeriksaan visual browser.
 
-## Batas fase 1
+## Batas demo
 
-Program dan kegiatan dibangun pada fase 2; monitoring fase 3; dashboard capaian fase 4; evaluasi fase 5; publikasi dan kesiapan presentasi penuh fase 6. Menu yang belum tersedia diberi label fase dan dinonaktifkan.
+Program/kegiatan fase 2, monitoring fase 3, dashboard capaian fase 4, dan evaluasi fase 5 belum tersedia. Menu fitur tersebut dinonaktifkan. Publikasi fase 1 dipercepat atas instruksi pengguna.
 
-Kata sandi demo diketahui bersama. Jangan memasukkan data operasional atau membuka demo ini ke publik sebagai sistem produksi. Database dan sesi sudah memiliki kontrol dasar, tetapi demo belum melalui pengujian keamanan dan beban produksi.
+Kata sandi demo diketahui bersama. Gunakan hanya data simulasi. SSO instansi, audit keamanan produksi, dan pengujian beban belum termasuk demo ini.

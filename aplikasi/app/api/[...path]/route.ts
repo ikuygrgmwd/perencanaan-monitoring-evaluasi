@@ -47,7 +47,7 @@ async function handle(request:Request){try{
   throw new AppError(404,'Tindakan tidak tersedia.');
 }catch(e){
   if(e instanceof AppError)return response({error:e.message},e.status);
-  if(e instanceof Error&&e.message.includes('UNIQUE constraint'))return response({error:'Kode atau email sudah digunakan. Gunakan nilai lain.'},409);
+  if(e instanceof Error&&(e.message.includes('UNIQUE constraint')||('code' in e&&e.code==='23505')))return response({error:'Kode atau email sudah digunakan. Gunakan nilai lain.'},409);
   console.error('Permintaan gagal',e instanceof Error?e.message:'unknown');
   return response({error:'Layanan belum dapat memproses permintaan. Data Anda belum disimpan; silakan coba kembali.'},503);
 }}
