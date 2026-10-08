@@ -22,7 +22,9 @@ export async function verifyPassword(password:string,stored:string){
 export function sessionToken(cookie:string|null){return cookie?.split(';').map(s=>s.trim()).find(s=>s.startsWith(`${COOKIE}=`))?.slice(COOKIE.length+1)||'';}
 export async function actorForToken(token:string):Promise<Actor|null>{
   if(!/^[a-f0-9]{64}$/.test(token))return null;
-  return database().prepare(`SELECT u.id,u.name,u.email,u.role,u.org_id,o.name org_name,o.kind org_kind FROM sessions s JOIN users u ON u.id=s.user_id JOIN organizations o ON o.id=u.org_id WHERE s.token_hash=? AND s.expires_at>? AND u.active=1 AND o.active=1`).bind(await digest(token),Date.now()).first<Actor>();
+  try{
+    return await database().prepare(`SELECT u.id,u.name,u.email,u.role,u.org_id,o.name org_name,o.kind org_kind FROM sessions s JOIN users u ON u.id=s.user_id JOIN organizations o ON o.id=u.org_id WHERE s.token_hash=? AND s.expires_at>? AND u.active=1 AND o.active=1`).bind(await digest(token),Date.now()).first<Actor>();
+  }catch{return null;}
 }
 export async function requireActor(request:Request){const actor=await actorForToken(sessionToken(request.headers.get('cookie')));if(!actor)throw new AppError(401,'Sesi berakhir. Silakan masuk kembali.');return actor;}
 export function requireAdmin(actor:Actor){if(actor.role!=='admin')throw new AppError(403,'Hanya admin BNPP yang dapat melakukan tindakan ini.');}
