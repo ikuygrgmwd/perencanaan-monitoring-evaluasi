@@ -38,7 +38,7 @@ Tersedia 7 organisasi, 7 akun, 4 domain, 6 lokus fiktif, 6 indikator, dan contoh
 
 Repositori: https://github.com/ikuygrgmwd/perencanaan-monitoring-evaluasi — branch `master`.
 
-Untuk proyek Vercel yang terhubung, gunakan root directory `aplikasi`, install `npm ci`, build `npm run build`, output `out`, dan Node.js 24.x. Konfigurasi berada di `vercel.json`. Preview ini tidak memerlukan `DATABASE_URL` atau integrasi Neon; environment lama tidak digunakan oleh halaman statis.
+Untuk proyek Vercel yang terhubung, gunakan root directory `aplikasi`, preset **Other** (`framework: null`), install `npm ci`, build `npm run build`, output `out`, dan Node.js 24.x. Konfigurasi berada di `vercel.json`. Preset Other menyajikan hasil static export tanpa mencari manifest server Next.js di folder HTML. Preview ini tidak memerlukan `DATABASE_URL` atau integrasi Neon; environment lama tidak digunakan oleh halaman statis.
 
 ## Pemeriksaan
 
