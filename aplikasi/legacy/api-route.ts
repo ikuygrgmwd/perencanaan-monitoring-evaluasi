@@ -1,4 +1,5 @@
 import {AppError,database,requireActor,requireAdmin,protectMutation,jsonBody,response,digest,randomToken,verifyPassword,sessionToken,cookieValue,SESSION_SECONDS,auditStatement} from '@/lib/server';
+// Arsip API fase 1; tidak didaftarkan sebagai route pada preview statis.
 import {readData,saveMaster} from '@/lib/master-data';
 import type {Actor,Resource} from '@/lib/model';
 import {z} from 'zod';

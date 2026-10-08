@@ -7,15 +7,18 @@
   },
   "scripts": {
     "install:ci": "node scripts/install-ci.mjs",
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "node scripts/preview-static.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "db:local": "node scripts/prepare-local.mjs",
     "db:cloud": "node --env-file=.env.local scripts/prepare-postgres.mjs",
     "test:phase1": "node scripts/check-phase1.mjs",
-    "test:cleanup": "node scripts/cleanup-test.mjs"
+    "test:cleanup": "node scripts/cleanup-test.mjs",
+    "preview": "node scripts/preview-static.mjs",
+    "typecheck": "tsc --noEmit",
+    "test:static": "node --experimental-strip-types --test scripts/check-static.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

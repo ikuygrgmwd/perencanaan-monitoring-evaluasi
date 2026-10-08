@@ -1,11 +1,18 @@
 # Ruang Perbatasan — BNPP
 
-Demo fungsional perencanaan, monitoring, dan evaluasi BWN–KP dengan data simulasi.
+Preview website statis perencanaan, monitoring, dan evaluasi BWN–KP dengan login demo dan data dummy. Tidak memerlukan database atau konfigurasi environment.
 
-Implementasi fase 1 mencakup login, sesi, hak akses Admin BNPP dan pengguna K/L, Pemda, batas darat/laut/udara, serta PLBN; data organisasi, akun, lokus, domain, indikator, dan riwayat aktivitas. Program/kegiatan, monitoring, dashboard capaian, serta evaluasi mengikuti fase berikutnya.
+```powershell
+cd aplikasi
+npm ci
+npm run build
+npm run preview
+```
 
-- Kode aplikasi dan cara menjalankan: [aplikasi/README.md](aplikasi/README.md)
-- Status implementasi dan verifikasi: [aplikasi/STATUS.md](aplikasi/STATUS.md)
+Buka http://localhost:3000/login/. Akun admin: **admin@demo.bnpp.test**, kata sandi: **DemoBnpp2027!**. Enam peran lain dapat dipilih pada halaman login.
+
+- Petunjuk dan akun demo: [aplikasi/README.md](aplikasi/README.md)
+- Status dan verifikasi: [aplikasi/STATUS.md](aplikasi/STATUS.md)
 - Keputusan dan rencana: [perencanaan/](perencanaan/)
 
-Dokumen referensi asli, hasil ekstraksi, database lokal, dan kredensial hosting tidak disertakan dalam repositori.
+Login hanya simulasi untuk preview. Fitur CRUD ditunda; program, monitoring, dashboard capaian, dan evaluasi akan dikembangkan bertahap. Dokumen referensi asli, database lokal, hasil build, dan kredensial tidak disertakan dalam repositori.

@@ -1,24 +1,20 @@
-# Publikasi GitHub dan Vercel
+# Publikasi GitHub dan preview statis
 
-## Instruksi terbaru pengguna
+## Keputusan terbaru — 8 Oktober 2026
 
-Pengguna meminta repositori diunggah ke akun GitHub `ikuygrgmwd` dan dihubungkan ke Vercel agar demo dapat diakses online. Instruksi ini mempercepat publikasi fase 1, tanpa memperluas fitur fase 2–5.
+Pengguna meminta aplikasi diubah menjadi website statis, menyediakan login demo dan data dummy, menunda CRUD, serta mengirim pembaruan ke GitHub yang sudah terhubung.
 
-## Status 8 Oktober 2026
+- Repositori: https://github.com/ikuygrgmwd/perencanaan-monitoring-evaluasi
+- Branch: `master`.
+- Root aplikasi: `aplikasi`.
+- Build: `npm run build`; keluaran: `out/`.
+- Preview lokal: `npm run preview`.
+- Database, migrasi, seed, dan environment tidak diperlukan.
 
-- Repositori private telah dibuat: https://github.com/ikuygrgmwd/perencanaan-monitoring-evaluasi
-- Branch aktif dan remote: `master`, `origin/master`.
-- Sumber aplikasi, seed data simulasi, pengujian, dan dokumen perencanaan telah diunggah.
-- Dokumen referensi asli/hasil ekstraksi, database lokal, hasil build, dan kredensial tidak diunggah.
-- Koneksi Vercel yang tersedia mengembalikan `403 forbidden` saat mengakses workspace. Login resmi Vercel CLI telah dimulai dan membutuhkan autentikasi pemilik akun.
-- Belum ada proyek Vercel atau deployment online yang berhasil dibuat untuk aplikasi ini.
+## Hosting yang terhubung ke GitHub
 
-## Pekerjaan setelah akses Vercel tersedia
+Konfigurasi Vercel di `aplikasi/vercel.json` menggunakan static export Next.js dengan output `out`. Gunakan Node.js 24.x dan install `npm ci`. Deploy otomatis mengikuti konfigurasi integrasi GitHub pada akun pemilik.
 
-1. Verifikasi akun/workspace tujuan dan hubungkan repositori dengan root directory `aplikasi`.
-2. Sesuaikan runtime Vinext/Cloudflare lokal untuk Vercel dan siapkan database cloud persisten. Database D1 lokal tidak dapat langsung dipakai di Vercel.
-3. Terapkan skema dan seed simulasi secara idempoten; simpan kredensial hanya dalam environment hosting.
-4. Jalankan build dan pemeriksaan login, hak akses, penyimpanan, serta audit pada runtime tujuan.
-5. Deploy, verifikasi URL aktif, dan periksa integrasi pembaruan dari GitHub.
+Pembaruan kode ke GitHub tidak dengan sendirinya membuktikan deployment online berhasil. Verifikasi URL deployment secara terpisah bila diperlukan. Pada pekerjaan ini yang diuji adalah hasil build statis lokal.
 
-Demo online tetap memakai data simulasi dan bukan sistem operasional produksi.
+Kode database lama disimpan sebagai arsip untuk pengembangan CRUD berikutnya; data dan kredensial lokal tidak dikirim ke GitHub. Login demo hanya untuk meninjau tampilan, bukan autentikasi produksi.

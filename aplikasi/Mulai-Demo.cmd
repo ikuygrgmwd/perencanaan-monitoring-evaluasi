@@ -1,4 +1,10 @@
 @echo off
 cd /d "%~dp0"
-node node_modules/next/dist/bin/next dev
+if not exist node_modules call npm ci
+if errorlevel 1 goto selesai
+call npm run build
+if errorlevel 1 goto selesai
+start "" http://localhost:3000/login/
+call npm run preview
+:selesai
 pause

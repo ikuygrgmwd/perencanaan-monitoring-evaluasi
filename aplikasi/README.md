@@ -1,26 +1,26 @@
-# Ruang Perbatasan
+# Ruang Perbatasan — preview statis
 
-Demo fungsional perencanaan, monitoring, dan evaluasi BWN–KP. Fase 1: fondasi, akun, hak akses, organisasi/unit, lokus, domain, dan indikator acuan. Data dan nama lokus merupakan simulasi.
+Versi saat ini menggunakan Next.js static export. Login, navigasi, pencarian, profil, dan data acuan dapat dipreview tanpa database, migrasi, seed, atau environment khusus.
 
-## Menjalankan lokal
+## Menjalankan
 
-Gunakan Node.js 24 atau 26 dan npm:
+Gunakan Node.js 24 atau 26 dan npm, dari folder `aplikasi`:
 
 ```powershell
 npm ci
-npm run db:local
-npm run dev
+npm run build
+npm run preview
 ```
 
-Buka http://localhost:3000/login. SQLite lokal tersimpan di `.data/demo.sqlite` dan diabaikan Git. Persiapan database dan seed idempoten; record yang sudah ada tidak ditimpa. Data D1 lama di `.wrangler/state` tetap tersimpan terpisah dan tidak otomatis dipindahkan.
+Buka http://localhost:3000/login/. `npm start` juga menjalankan preview statis. Untuk pengembangan gunakan `npm run dev`. Di Windows tersedia `Mulai-Demo.cmd` yang memasang dependensi bila perlu, membangun aplikasi, lalu membuka preview.
 
-Tanpa `DATABASE_URL`, aplikasi memakai SQLite lokal. Bila `.env.local` memuat `DATABASE_URL`, aplikasi memakai database cloud tersebut; perubahan lokal juga akan tersimpan ke database itu. Kredensial environment tidak boleh masuk Git.
+Build menghasilkan folder `out/` berisi HTML, CSS, dan JavaScript. Folder ini dapat disajikan oleh hosting statis pada root domain. Gunakan HTTP, bukan membuka HTML melalui `file://`. Build memakai Webpack untuk menghindari kegagalan proses CSS Turbopack pada lingkungan Windows ini.
 
-## Akun simulasi
+## Akun demo
 
-Semua akun contoh menggunakan kata sandi **DemoBnpp2027!**. Tombol akun pada halaman login hanya mengisi formulir; server tetap memeriksa kata sandi.
+Kata sandi semua akun: **DemoBnpp2027!**. Pilih tombol peran, lalu klik **Masuk**.
 
-| Peran/unit | Email |
+| Peran | Email |
 | --- | --- |
 | Admin BNPP | admin@demo.bnpp.test |
 | K/L | kl@demo.bnpp.test |
@@ -30,50 +30,27 @@ Semua akun contoh menggunakan kata sandi **DemoBnpp2027!**. Tombol akun pada hal
 | Batas udara | udara@demo.bnpp.test |
 | PLBN | plbn@demo.bnpp.test |
 
-Seed: 7 organisasi, 7 akun, 4 domain, 6 lokus fiktif, dan 6 indikator. Admin mengelola data acuan; pengguna biasa membaca data sesuai organisasi dan penugasan lokus. Akun baru memerlukan kata sandi minimal 12 karakter. Perubahan akun mencabut sesi akun tersebut.
+Login ini simulasi di browser, bukan autentikasi produksi. `sessionStorage` hanya menyimpan pilihan akun sampai tab ditutup; sesi bertahan saat refresh. Data acuan berasal dari `lib/demo-data.ts`, tidak disimpan di localStorage atau database. Semua data dummy dapat dibaca dari aset publik. Pembagian peran hanya memperagakan tampilan, bukan perlindungan data rahasia.
 
-## Vercel dan PostgreSQL
+Tersedia 7 organisasi, 7 akun, 4 domain, 6 lokus fiktif, 6 indikator, dan contoh aktivitas. Admin melihat seluruh data; peran lainnya melihat organisasi dan lokus terkait. Pencarian berfungsi. Tambah, ubah, dan hapus belum tersedia. Menu program, monitoring, dashboard capaian, dan evaluasi tetap menunggu tahap berikutnya.
 
-Runtime menggunakan Next.js App Router, React, TypeScript, dan Shadcn. Database online menggunakan Neon PostgreSQL melalui koneksi server; perubahan data dan audit disimpan dalam satu transaksi. Vercel menolak berjalan tanpa `DATABASE_URL` agar tidak menggunakan penyimpanan sementara secara diam-diam.
+## GitHub dan hosting
 
-Konfigurasi proyek Vercel:
+Repositori: https://github.com/ikuygrgmwd/perencanaan-monitoring-evaluasi — branch `master`.
 
-- Root directory: `aplikasi`
-- Framework: Next.js; Node.js 24.x
-- Install: `npm ci`; build: `npm run build`
-- Environment: `DATABASE_URL`, disediakan integrasi Neon
-- Region: Singapura (`sin1`)
-- Branch produksi GitHub: `master`
-
-Migrasi PostgreSQL terpisah berada di `db/postgres/`. Migrasi SQLite/Drizzle awal dipertahankan di `drizzle/`. Perubahan skema berikutnya harus mencakup kedua database bila mode lokal tetap didukung. Terapkan migrasi secara eksplisit, bukan dari endpoint publik atau setiap build:
-
-```powershell
-node --env-file=.env.local scripts/prepare-postgres.mjs
-```
-
-Skrip mencatat migrasi yang diterapkan dan menambahkan seed dengan `ON CONFLICT DO NOTHING`. Tidak mereset data yang sudah ada.
+Untuk proyek Vercel yang terhubung, gunakan root directory `aplikasi`, install `npm ci`, build `npm run build`, output `out`, dan Node.js 24.x. Konfigurasi berada di `vercel.json`. Preview ini tidak memerlukan `DATABASE_URL` atau integrasi Neon; environment lama tidak digunakan oleh halaman statis.
 
 ## Pemeriksaan
 
 ```powershell
 npm run build
-node node_modules/typescript/bin/tsc --noEmit
-npm run start
-# Di terminal lain, server localhost:3000 harus sedang berjalan:
-npm run test:phase1
-npm run test:cleanup
+npm run typecheck
+npm run test:static
+npm run preview
 ```
 
-Untuk server lokal yang memakai PostgreSQL, pembersihan menggunakan environment yang sama:
+Pengujian statis memeriksa relasi dan lingkup data tujuh akun serta keberadaan seluruh HTML tanpa API. Periksa juga login benar/salah, navigasi, pencarian, refresh, dan logout melalui browser.
 
-```powershell
-node --env-file=.env.local scripts/cleanup-test.mjs
-```
+## Implementasi database sebelumnya
 
-Pengujian hanya menerima localhost dan membuat record sementara. File SQL pembersihan hanya memuat ID record yang dibuat pengujian. Hasil ada di `.sites-runtime/hasil-uji-fase1.json`. Pemeriksaan HTTP/render server tidak menggantikan pemeriksaan visual browser.
-
-## Batas demo
-
-Program/kegiatan fase 2, monitoring fase 3, dashboard capaian fase 4, dan evaluasi fase 5 belum tersedia. Menu fitur tersebut dinonaktifkan. Publikasi fase 1 dipercepat atas instruksi pengguna.
-
-Kata sandi demo diketahui bersama. Gunakan hanya data simulasi. SSO instansi, audit keamanan produksi, dan pengujian beban belum termasuk demo ini.
+API lama disimpan di `legacy/api-route.ts` dan tidak terdaftar sebagai endpoint. Helper database, skema, migrasi, formulir CRUD lama, dan skrip pengujian fase 1 dipertahankan untuk pengembangan berikutnya, tetapi tidak dipakai preview ini. Jangan menjalankan `db:*`, `test:phase1`, atau `test:cleanup` untuk mencoba preview statis.
