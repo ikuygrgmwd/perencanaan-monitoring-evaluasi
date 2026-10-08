@@ -1,0 +1,27 @@
+# Dokumen sumber dan hasil ekstraksi lokal
+/reference_text/
+/extract_references.py
+/inspect_slides.py
+
+# Rahasia, database lokal, hasil build, dan alat lokal
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+.vinext/
+dist/
+.wrangler/
+.sites-runtime/
+.vercel/
+.agents/
+.codex/
+.tools/
+*.tsbuildinfo
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.log
+*.pem
+*.key
