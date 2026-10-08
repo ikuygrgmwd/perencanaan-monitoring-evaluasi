@@ -37,7 +37,7 @@ test('relasi data dummy konsisten tanpa password hash atau token',()=>{
 
 test('build mengekspor semua halaman sebagai HTML tanpa endpoint API',()=>{
   const output=fileURLToPath(new URL('../out/',import.meta.url));
-  for(const route of ['','login/','beranda/','organisasi/','akun/','lokus/','domain/','indikator/','profil/','aktivitas/']){
+  for(const route of ['','login/','beranda/','program/','monitoring/','dashboard/','evaluasi/','milestone/','organisasi/','akun/','lokus/','domain/','indikator/','profil/','aktivitas/']){
     assert.ok(existsSync(`${output}${route}index.html`),`HTML ${route||'/'} harus tersedia`);
   }
   assert.ok(existsSync(`${output}404.html`));

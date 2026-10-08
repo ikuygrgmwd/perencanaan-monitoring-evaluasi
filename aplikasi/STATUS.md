@@ -24,6 +24,15 @@ Turbopack gagal memulai proses CSS di lingkungan Windows ini. Skrip build/dev me
 
 ## Batasan
 
-Login dan pembagian peran hanya simulasi di browser, bukan keamanan produksi. Seluruh fixture bersifat publik. Riwayat aktivitas tidak merekam aksi sesi saat ini. CRUD, program/kegiatan, monitoring, dashboard capaian, dan evaluasi belum tersedia.
+Login dan pembagian peran hanya simulasi di browser, bukan keamanan produksi. Seluruh fixture bersifat publik. Riwayat aktivitas tidak merekam aksi sesi saat ini. CRUD belum tersedia. Program/kegiatan, monitoring, dashboard capaian, evaluasi, dan Milestone tersedia sebagai simulasi statis, bukan modul operasional.
 
 Kode database terdahulu dipertahankan untuk pengembangan berikutnya, tetapi tidak digunakan oleh preview. Dokumen dan hasil pengujian fase 1 lama tidak menggambarkan kemampuan runtime statis saat ini.
+
+## Pembaruan ruang kerja — 8 Oktober 2026
+
+- Urutan menu: Beranda, Program dan kegiatan, Monitoring, Dashboard capaian, Evaluasi, Milestone. Data acuan dan administrasi berada di bawah.
+- Lima halaman preview baru memakai enam program dummy yang terhubung ke lokus dan indikator existing, dengan lingkup sesuai akun.
+- Milestone berupa diagram responsif kondisi awal, posisi saat ini, dan target akhir, dilengkapi capaian dan rekomendasi tindak lanjut.
+- Pencarian dan filter domain bekerja di browser; tidak ada backend, penyimpanan perubahan, atau CRUD baru.
+- Verifikasi pembaruan: build statis, TypeScript, ESLint file terkait, dan 3 pengujian statis lulus. Browser memverifikasi kelima halaman, filter dan hasil kosong, lingkup Pemda (2 program), refresh, serta diagram desktop dan ponsel 390px. Tidak ada warning/error console pada alur admin yang diperiksa.
+- Preview lokal tersedia di http://127.0.0.1:3001/milestone/ saat server preview berjalan. Status deployment hosting perlu diperiksa terpisah dari pembaruan kode di GitHub.

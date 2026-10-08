@@ -32,7 +32,7 @@ Kata sandi semua akun: **DemoBnpp2027!**. Pilih tombol peran, lalu klik **Masuk*
 
 Login ini simulasi di browser, bukan autentikasi produksi. `sessionStorage` hanya menyimpan pilihan akun sampai tab ditutup; sesi bertahan saat refresh. Data acuan berasal dari `lib/demo-data.ts`, tidak disimpan di localStorage atau database. Semua data dummy dapat dibaca dari aset publik. Pembagian peran hanya memperagakan tampilan, bukan perlindungan data rahasia.
 
-Tersedia 7 organisasi, 7 akun, 4 domain, 6 lokus fiktif, 6 indikator, dan contoh aktivitas. Admin melihat seluruh data; peran lainnya melihat organisasi dan lokus terkait. Pencarian berfungsi. Tambah, ubah, dan hapus belum tersedia. Menu program, monitoring, dashboard capaian, dan evaluasi tetap menunggu tahap berikutnya.
+Tersedia 7 organisasi, 7 akun, 4 domain, 6 lokus fiktif, 6 indikator, dan contoh aktivitas. Admin melihat seluruh data; peran lainnya melihat organisasi dan lokus terkait. Pencarian berfungsi. Tambah, ubah, dan hapus belum tersedia. Program dan kegiatan, monitoring, dashboard capaian, evaluasi, dan Milestone tersedia sebagai preview dengan enam program dummy yang mengikuti lingkup lokus akun. Pencarian dan filter domain berfungsi. Milestone memperlihatkan alur kondisi awal → capaian saat ini → target akhir 2026; seluruh angka bersumber dari fixture yang sama. Modul operasional dan CRUD belum diimplementasikan.
 
 ## GitHub dan hosting
 

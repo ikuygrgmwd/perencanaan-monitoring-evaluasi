@@ -19,6 +19,6 @@ Pengguna meminta website statis yang dapat dipreview, login demo dan data dummy,
 
 Jangan menyimpan data operasional dalam aset statis. Jangan memakai localStorage sebagai database. Tegaskan login demo bukan keamanan produksi; riwayat aktivitas hanyalah contoh. Jangan mengaktifkan kontrol CRUD tanpa implementasi yang sesuai.
 
-Program/kegiatan, monitoring, dashboard capaian, dan evaluasi tetap tahap berikutnya. Jangan mengklaim modul tersebut selesai.
+Program/kegiatan, monitoring, dashboard capaian, evaluasi, dan Milestone tersedia sebagai preview statis menggunakan `lib/preview-planning.ts` dan `components/product/planning-preview.tsx`. Modul operasional dan CRUD tetap tahap berikutnya. Jangan mengklaim modul produksi selesai.
 
 Jalankan build, TypeScript, pengujian statis, dan pemeriksaan browser sesuai perubahan. Jangan mengklaim verifikasi visual sebelum dilakukan. GitHub terhubung ke `ikuygrgmwd/perencanaan-monitoring-evaluasi`, branch `master`. Root hosting adalah `aplikasi`, output `out`; tanpa database atau environment wajib.
